@@ -20,8 +20,73 @@ def match(match_id):
 
 
 def is_match(fave_numbers_1, fave_numbers_2):
+    fave_numbers_1 = sort_matches(fave_numbers_1)
+    fave_numbers_2 = sort_matches(fave_numbers_2)
+
     for number in fave_numbers_2:
-        if number not in fave_numbers_1:
+        if(not search_number(number, fave_numbers_1)):
             return False
+        fave_numbers_1.remove(number)
 
     return True
+
+
+def sort_matches(user_numbers):
+    right_index = len(user_numbers)//2
+
+    half_index = right_index
+
+    left_half = user_numbers[:half_index]
+    right_half = user_numbers[right_index:]
+
+    if(half_index > 0):
+        left_half = sort_matches(left_half)
+        right_half = sort_matches(right_half)
+
+    left_counter = 0
+    right_counter = 0
+    last_movement = 'left'
+    sorted_matches = []
+
+    while(left_counter < len(left_half) and right_counter < len(right_half)):
+        if(left_half[left_counter] <= right_half[right_counter]):
+            sorted_matches.append(left_half[left_counter])
+            left_counter += 1
+            last_movement = 'left'
+        else:
+            sorted_matches.append(right_half[right_counter])
+            right_counter += 1
+            last_movement = 'right'
+
+    if(last_movement == 'left'):
+        sorted_matches = sorted_matches + right_half[right_counter:]
+    else:
+        sorted_matches = sorted_matches + left_half[left_counter:]
+
+
+    return sorted_matches
+
+
+def search_number(number, fave_numbers):
+    half = len(fave_numbers)//2-1
+
+    
+    if(number == fave_numbers[half]):
+        return True
+    elif(number < fave_numbers[half]):
+        new_half = fave_numbers[:half]
+        if(len(new_half) <= 1):
+            if(len(new_half) == 1 and new_half[0] == number):
+                return True
+            else:
+                return False
+        return search_number(number,new_half)
+    elif(number > fave_numbers[half]):
+        new_half = fave_numbers[half+1:]
+
+        if(len(new_half) <= 1):
+            if(len(new_half) == 1 and new_half[0] == number):
+                return True
+            else:
+                return False
+        return search_number(number,new_half)

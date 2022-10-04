@@ -27,4 +27,36 @@ def search_users(args):
 
     # Implement search here!
 
-    return USERS
+    
+    results = []
+
+    if('id' in args):
+        for user in USERS:
+            if(args['id'] == user['id'] and user not in results):
+                results.append(user)
+
+    if('name' in args):
+        param = args['name'].lower()
+        for user in USERS:
+            attribute = user['name'].lower()
+            if(param in attribute and user not in results):
+                results.append(user)
+
+    if('age' in args):
+        ages = int(args['age'])
+        ages = [ages-1, ages, ages+1]
+        for user in USERS:
+            if(int(user['age']) in ages and user not in results):
+                results.append(user)
+
+    if('occupation' in args):
+        param = args['occupation'].lower()
+        for user in USERS:
+            attribute = user['occupation'].lower()
+            if(param in attribute and user not in results):
+                results.append(user)
+
+
+    if(len(results) == 0):
+        return USERS            
+    return results
