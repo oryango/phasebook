@@ -20,13 +20,20 @@ def match(match_id):
 
 
 def is_match(fave_numbers_1, fave_numbers_2):
+
     fave_numbers_1 = sort_matches(fave_numbers_1)
     fave_numbers_2 = sort_matches(fave_numbers_2)
-
+    memo = []
     for number in fave_numbers_2:
-        if(not search_number(number, fave_numbers_1)):
+
+        if(len(memo) > 3):
+            truth_val, temp = search_number(number, memo[-3])
+            if(truth_val):
+                continue
+
+        truth_val, memo = search_number(number, fave_numbers_1) 
+        if(not truth_val):
             return False
-        fave_numbers_1.remove(number)
 
     return True
 
@@ -66,7 +73,7 @@ def sort_matches(user_numbers):
 
     return sorted_matches
 
-
+"""
 def search_number(number, fave_numbers):
     half = len(fave_numbers)//2-1
 
@@ -90,3 +97,30 @@ def search_number(number, fave_numbers):
             else:
                 return False
         return search_number(number,new_half)
+"""
+def search_number(number, fave_numbers):
+    memo = []
+    old_half = fave_numbers
+    while(True):
+        half = len(old_half)//2-1
+        if(number == old_half[half]):
+            return True, memo
+        elif(number < old_half[half]):
+            new_half = old_half[:half]
+            if(len(new_half) <= 1):
+                if(len(new_half) == 1 and new_half[0] == number):
+                    return True, memo
+                else:
+                    return False, []
+            old_half = new_half
+            memo.append(new_half)
+        elif(number > old_half[half]):
+            new_half = old_half[half+1:]
+            if(len(new_half) <= 1):
+                if(len(new_half) == 1 and new_half[0] == number):
+                    return True, memo
+                else:
+                    return False, []
+            old_half = new_half
+            memo.append(new_half)
+    return True, memo
